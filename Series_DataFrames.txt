@@ -1,0 +1,363 @@
+import numpy as np
+import pandas as pd
+SERIES HAVE LABEL INDEX AND DATA POINTS
+
+
+labels =['a', 'b', 'c']
+my_data = [10,20,30]
+arr = np.array(my_data)
+d = {'a':10, 'b':20, 'c':30}  ->'key': value
+
+pd.Series(data = my_data)
+
+
+
+pd.Series(data = my_data, index = labels)
+pd.Series(my_data, labels)
+
+pd.Series(arr)
+pd.Series(arr, labels)
+
+pd.Series(d)
+d
+
+pd.Series(data=labels)
+pd.Series(data=[sum, print, len]) #built in functions
+
+#Using an index
+ser1 = pd.Series([1, 2, 3, 4], ['USA', 'Germany', 'USSR', 'Japan'])
+ser1
+
+ser2 = pd.Series([1, 2, 5, 4], ['USA', 'Germany', 'Italy', 'Japan'])
+ser2
+
+#Grab information out of a series
+ser1['USA']
+
+ser3 = pd.Series(data = labels)
+ser3[0]
+
+ser1 + ser2 
+
+
+
+
+DataFrames... A bunch of series that share the same index
+import numpy as np
+import pandas as pd
+
+from numpy.random import randn
+
+np.random.seed(101)
+
+df = pd.DataFrame(randn(5,4),['A', 'B', 'C', 'D', 'E'],['W', 'X', 'Y', 'Z'])		shft tab to view
+
+df['W'] series returned
+type(df['W'])
+type(df)
+
+GRAB A COLUMN FROM A DATAFRAME
+df.W---not to use instead df[]
+df[['W', 'Z']] dataframe returned
+
+df['new'] = df['W'] + df['Y']
+df.drop() to remove columns
+df.drop('new', axis=1) to remove new column
+df.drop('new', axis=1, inplace=True) to keep changes
+df
+
+DROP ROWS
+df.drop('E')
+df.drop('E', axis=0)
+
+df.shape IS A TUPLE
+>>>(5,4) ROW IS 0 AXIS AND COLUMN IS 1 AXIS
+
+SELECTING ROWS REQUIRES TO CALL METHOD
+df.loc['A'] LABEL BASED INDEX LOCATION
+BASED OFF INDEX POSITION OF AN INTEGER
+df.iloc[2]
+
+SELECTING COLUMNS
+df.loc['B', 'Y']
+df.loc[['A', 'B'], ['W', 'Y']]
+
+
+DATAFRAMES-PART 2
+df
+df > 0 ->boolean value
+booldf = df > 0
+
+booldf
+df[booldf]
+df[df>0]
+
+df
+df'['W']>0
+df['W']
+df[df['W']>0]
+
+df
+df[df['Z']<0]
+resultdf = df[df['W']>0]
+resultdf['X']
+df[df['W']>0]['X']
+df[df['W']>0][['Y', 'X']]
+
+boolser = df['W']>0
+result = df[boolser]
+mycols = ['Y', 'X']
+result[mycols]
+result[['Y', 'X']]
+
+df[df['W']>0]
+df[(df['W']>0) and (df['Y']>1)]  AND->& to not confuse ambiguity with multiple conditions
+				OR-> | 
+
+RESETTING THE INDEX OR SETTING IT TO SOMETHING ELSE
+df
+df.reset_index()
+newind = 'CA NY WY OR CO'.split()
+newind
+df['States'] = newind
+df
+
+df.set_index('States') with shft + Enter df.set_index('States', inplace=true)
+
+
+DATAFRAMES PART 3
+import numpy as np
+import pandas as pd
+
+# Index Levels
+outside = ['G1', 'G1', 'G1', 'G2', 'G2', 'G2']
+inside = [1,2,3,1,2,3]
+hier_index = list(zip(outside, inside))
+hier_index = pd.MultiIndex.from_tuples(hier_index)CUSTOMIZATION OF MAKING A DATAFRAME
+
+outside
+inside
+hier_index
+list(zip(outside, inside))
+
+df=pd.DataFrame(rand,(6,2), hier_index,['A','B']) MULTI-LEVEL INDEX AKA HEIRARCHY
+df
+
+df.loc['G1'] want everything from G1 calling data from multi-level index
+df.loc['G1'].loc[1] call from outside index and then call from inside deeper
+
+df.index.names->FrozenList([None, None])
+df.index.names = ['Groups', 'Num']
+
+df.loc['G2'].loc[2]['B']
+
+CROSS SECTION
+df.xs  USED WITH MULTI-LEVEL OF INDEX
+df.xs('G1') can skip or go inside of MULTI-LEVEL INDEX
+df.xs(1, level='Num')
+
+
+
+MISSING DATA
+import numpy as np
+import pandas as pd
+
+d = {'A':[1,2,np.nan], 'B':[5,np.nan,np.nan], 'C':[1,2,3]}
+df = pd.DataFrame(d)
+df
+
+DROP AN A METHOD
+df.dropna() drops any row with null or single value
+df.dropna(axis=1) drops columns 
+
+df.dropna(thresh =2) an integer value requires that many to not be dropped
+df.dropna
+
+FILL NA to replace missing values
+df.fillna(value="FILL VALUE")
+df['A'].fillna(value=df['A'].mean())
+
+
+ 
+GROUPBY to aggregate functions, allows you to group together rows based off of columns
+import numpy as np
+import pandas as pd
+
+data = {'Company':['GOOG', 'GOOG', 'MSFT', 'MSFT', 'FB', 'FB'], 
+	'Person':['Sam', 'Charlie', 'Amy', 'Vanessa', 'Carl', 'Sarah'],
+	'Sales':[200,120,340,124,243,350]}
+df = pd.DataFrame(data)
+df
+
+df.groupby('Company')
+byComp = df.groupby('Company')
+byComp.mean, sum, std, etc
+byComp.sum().loc['FB']
+df.groupby('Company').sum().loc['FB']
+df.groupby('Company').count(), max, min, etc
+df.groupby('Company').describe()
+df.groupby('Company').describe().transpose()
+df.groupby('Company').describe().transpose()['FB']
+
+
+
+
+MERGING, JOINING, AND CONCATENATING DATAFRAMES
+import pandas as pd
+
+df1 = pd.DataFrame({'A': ['A0', 'A1', 'A2', 'A3'],
+			'B': ['B0', 'B1', 'B2', 'B3'],
+			'C': ['C0', 'C1', 'C2', 'C3'],
+			'D': ['D0', 'D1', 'D2', 'D3']},
+			index=[0,1,2,3])
+			
+df2 = pd.DataFrame({'A': ['A4', 'A5', 'A5', 'A7'],
+			'B': ['B4', 'B5', 'B6', 'B7'],
+			'C': ['C4', 'C5', 'C6', 'C7'],
+			'D': ['D4', 'D5', 'D6', 'D7']},
+			index=[4,5,6,7])
+df3= pd.DataFrame({'A': ['A8', 'A9', 'A10', 'A11'],
+			'B': ['B8', 'B9', 'B10', 'B11'],
+			'C': ['C8', 'C9', 'C10', 'C11'],
+			'D': ['D8', 'D9', 'D10', 'D11']},
+			index=[8,9,10,11])
+
+df1
+df2
+df3
+
+CONCATENATION glues together the dataframes
+pd.concat([df1, df2, df3])
+pd.concat([df1, df2, df3], axis=1) make sure everything joins on the axis
+
+left = pd.DataFrame({'key': ['K0', K1', 'K2', 'K3'],
+		     'A': ['A0', 'A1', 'A2', 'A3'],
+		     'B': ['B0', 'B1', 'B2', 'B3']})
+
+right = pd.DataFrame({'key': ['K0', K1', 'K2', 'K3'],
+		     'C': ['C0', 'C1', 'C2', 'C3'],
+		     'D': ['D0', 'D1', 'D2', 'D3']})
+left
+right
+
+Merging SQL tables together
+pd.merge(left,right,how='inner',on='key')
+
+
+left = pd.DataFrame({'key1': ['K0', K1', 'K2', 'K3'],
+		     'key2': ['K0', K1', 'K2', 'K3'],		
+		        'A': ['A0', 'A1', 'A2', 'A3'],
+		        'B': ['B0', 'B1', 'B2', 'B3']})
+
+right = pd.DataFrame({'key1': ['K0', K1', 'K2', 'K3'],
+			       'key2': ['K0', K1', 'K2', 'K3'],
+		     	       'C': ['C0', 'C1', 'C2', 'C3'],
+		               'D': ['D0', 'D1', 'D2', 'D3']})
+pd.merge(left, right, on=['key1', 'key2'])
+pd.merge(left, right, how='outer', on=['key1', 'key2'])
+pd.merge(left, right, how='right', on=['key1', 'key2'])
+pd.merge(left, right, how='left', on=['key1', 'key2'])
+
+Joining keys join on index instead of merges column
+left.join(right)
+left.join(right, how='outer')
+
+
+
+OPERATIONS
+import numpy as np
+import pandas as pd
+
+df = pd.DataFrame({'col1':[1,2,3,4],
+		   'col2':[444,555,666,444],
+		   'col3':['abc','def','ghi','xyz']})
+df.head()
+UNIQUE VALUES IN A DATAFRAME
+df['col2'].unique()
+len(df['col2'].unique()
+df['col2'].nunique()
+
+VALUE COUNTS how many times each unique value returns in a column
+df['col2].value_counts()
+
+SELECTING DATA
+df[df['col1']>2]
+COMBINE CONDITIONS
+df[(df['col1']>2) & (df['col2']==444)]
+
+APPLIED METHOD
+def times2(x):
+    return x*2
+df['col'1].sum()
+df['col1'].apply(times2(=))
+df['col3'].apply(len) length of strings
+df['col2'].apply(lambda x: x*2)
+
+REMOVING COLUMNS
+df
+df.drop('col1', axis-=1) due to on columns specify axis =1 or inplace=true
+df.columns 
+df.index
+
+SORTING AND ORDERING A DATAFRAME
+df
+df.sort_values('col2') add by =()within
+
+df.isnull()
+
+PIVOT TABLE
+data = {'A':['foo', 'foo', 'foo', 'bar', 'bar', 'bar'],
+     'B':['one', 'one', 'two', 'two', 'one', 'one'],
+        'C':['x', 'y', 'x', 'y', 'x', 'y'],
+        'D':[1,3,2,5,4,1]}
+
+df = pd.DataFrame(data)
+df
+df.pivot_table(values='D', index=['A','B'], columns=['C'])
+
+
+
+DATA INPUT AND OUTPUT
+CSV
+EXCEL
+HTML
+SQL
+
+import pandas as pd
+pwd then shft+ENTER
+
+pd.read_csv('example.csv')
+pd.read_ then tab to read list of pd.read files
+
+df = pd.read_csv('example.csv')
+df.to_csv('My_output', index=False)
+pd.read_csv('My_output')
+
+pip install xlrd
+
+READING FROM AN EXCEL FILE
+pd.read_excel('Excel_Sample.xlsx', sheetname='Sheet1')
+WRITE TO OR SAVE TO AN EXCEL FILE
+df.to_excel('Excel_Sample2.xlsx', sheetname="NewSheet')
+
+HTML INPUT
+data = pd.read_html('https://www.fdic.gov/bank/individual/failed/banklist.html')
+type(data)->list to find every table element in the html
+
+data[0]
+data[0].head()
+
+SQL
+build a SQL engine with library specifically designed for 
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///:memory:')
+df.to_sql('my_table', engine)
+sqldf = pd.read_sql('my_table', con=engine)
+sqldf
+
+
+
+
+
+		     
+	
